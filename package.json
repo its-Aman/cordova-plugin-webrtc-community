@@ -1,0 +1,14 @@
+{
+  "name": "cordova-plugin-webrtc-community",
+  "version": "0.0.1",
+  "description": "Web-Rtc plugin for community app",
+  "cordova": {
+    "id": "cordova-plugin-webrtc-community",
+    "platforms": []
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "author": "Aman Kumar, Sachin Kishore, Innotical Solutions Private Limited",
+  "license": "ISC"
+}
