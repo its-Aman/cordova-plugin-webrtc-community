@@ -1,13 +1,28 @@
 {
   "name": "cordova-plugin-webrtc-community",
+  "email": "kumaraman7056@gmail.com",
   "version": "0.0.1",
-  "description": "Web-Rtc plugin for community app",
+  "description": "Web-Rtc plugin for community app.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/its-Aman/cordova-plugin-webrtc-community.git"
+  },
+  "homepage": "https://github.com/its-Aman/cordova-plugin-webrtc-community/blob/master/README.md",
+  "bugs": {
+    "email": "kumaraman7056@gmail.com",
+    "url": "https://github.com/its-Aman/cordova-plugin-webrtc-community/issues"
+  },
   "cordova": {
     "id": "cordova-plugin-webrtc-community",
-    "platforms": []
+    "platforms": [
+      "ios"
+    ]
   },
   "keywords": [
-    "ecosystem:cordova"
+    "ecosystem:cordova",
+    "cordova-ios",
+    "ios: webrtc",
+    "webrtc"
   ],
   "author": "Aman Kumar, Sachin Kishore, Innotical Solutions Private Limited",
   "license": "ISC"

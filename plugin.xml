@@ -9,9 +9,36 @@
 
     <description>Cordova Plugin for web-rtc in community app</description>
 
-    <keywords>cordova, background service, android</keywords>
+	<description>A plugin for implement WebRTC in ios.</description>
+	<author>Aman Kumar, Sachin Kishore, Innotical Solutions Private Limited</author>
+	<license>ISC</license>
+	<keywords>webrtc, ios</keywords>
+
+	<info>
+		cordova-plugin-webrtc-community enables use of the JavaScript WebRTC APIs in iOS devices.
+	</info>
 
     <js-module name="CommunityWebRtc" src="www/CommunityWebRtc.js">
         <clobbers target="cordova.plugins.CommunityWebRtc" />
     </js-module>
+
+        <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="CommunityWebRtc">
+                <param name="ios-package" value="CommunityWebRtc" />
+            </feature>
+        </config-file>
+
+    <!-- Project source files -->
+        <source-file src="src/ios/CommunityWebRtc.swift" />
+		<source-file src="src/ios/AVCaptureState.swift" />
+		<source-file src="src/ios/RTCCapturer.swift" />
+		<source-file src="src/ios/RTCCapturerSettingsModel.swift" />
+		<source-file src="src/ios/RTCClient.swift" />
+		<source-file src="src/ios/RTCSEttingsStore.swift" />
+
+    <!-- IOS Shared Dependencies -->
+        <framework src="WebRTC" type="podspec" spec="~> 63.11" />
+        
+    </platform>
 </plugin>
