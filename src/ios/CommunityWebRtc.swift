@@ -22,7 +22,7 @@ let SCREEN_HEIGHT = UIScreen.main.bounds.height
     var upperNavView : UIView!
     var currentStatusLabel : UILabel!
     var doctorLabel : UILabel!
-    var familyCareCallType : UILabel!
+    var lineView : UIImageView!
     var acceptBtn : UIImageView!
     var rejectBtn : UIImageView!
     var localMediaStream: RTCMediaStream!
@@ -54,6 +54,7 @@ let SCREEN_HEIGHT = UIScreen.main.bounds.height
     var notPicSec = 0
     var callPicked = false
     
+
     func echo(_ command: CDVInvokedUrlCommand) {
         self.callBckCommand = command
         var pluginResult = CDVPluginResult(
@@ -73,8 +74,22 @@ let SCREEN_HEIGHT = UIScreen.main.bounds.height
             callbackId: command.callbackId
         )
     }
-    override func awakeFromNib() {
+    func setProximitySensorEnabled(_ enabled: Bool) {
+        let device = UIDevice.current
+        device.isProximityMonitoringEnabled = enabled
+        if device.isProximityMonitoringEnabled {
+            NotificationCenter.default.addObserver(self, selector: #selector(proximityChanged), name: .UIDeviceProximityStateDidChange, object: device)
+        } else {
+            NotificationCenter.default.removeObserver(self, name: .UIDeviceProximityStateDidChange, object: nil)
+        }
     }
+    
+    @objc func proximityChanged(_ notification: Notification) {
+        if let device = notification.object as? UIDevice {
+            print("\(device) detected!")
+        }
+    }
+    
     func configureVideoClient() {
         print(self.stunServer)
         let iceServers = RTCIceServer.init(urlStrings: [self.stunServer], username: "", credential: "")
@@ -136,7 +151,7 @@ let SCREEN_HEIGHT = UIScreen.main.bounds.height
                 if !self.isVideoCall{
                     self.speakerBtn.frame = CGRect.init(x: SCREEN_WIDTH/2-60, y: SCREEN_HEIGHT-100, width: 60, height: 60)
                     self.rejectBtn.frame = CGRect.init(x: SCREEN_WIDTH/2+20, y: SCREEN_HEIGHT-100, width: 60, height: 60)
-                    self.speakerBtn.isHidden = true
+                    self.speakerBtn.isHidden = false
                     self.isSpeakerOff = true
                     self.SetSpeakerOn()
                 }
@@ -216,13 +231,14 @@ let SCREEN_HEIGHT = UIScreen.main.bounds.height
         self.callPicked = false
         self.rejectNotPickedTimer()
         self.rejectBusyTimer()
+        self.setProximitySensorEnabled(false)
     }
 }
 extension CommunityWebRtc{
     func addCallerView(image:String , isCallComing : Bool, appName : String , doctorName : String , status : String , rejectStr : String , acceptStr : String) {
         self.isAccepted = false
         self.isSpeakerOff = true
-        callRemoteView = RTCEAGLVideoView.init(frame: CGRect.init(x: 0, y: 0, width: SCREEN_WIDTH, height: SCREEN_HEIGHT))
+        callRemoteView = RTCEAGLVideoView.init(frame: CGRect.init(x: 0, y: 20, width: SCREEN_WIDTH, height: SCREEN_HEIGHT))
         callRemoteView.backgroundColor = UIColor.white
         self.callRemoteView.delegate = self
         callImageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: SCREEN_WIDTH, height: SCREEN_HEIGHT))
@@ -232,30 +248,28 @@ extension CommunityWebRtc{
         callImageView.contentMode = .scaleToFill
         callImageView.backgroundColor = UIColor.white
         callRemoteView.addSubview(callImageView)
-        upperNavView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: SCREEN_WIDTH, height: 125))
-        upperNavView.alpha = 0.78
-        upperNavView.backgroundColor = UIColor.darkGray
-        familyCareCallType = UILabel.init(frame: CGRect.init(x: 10, y: 25, width: SCREEN_WIDTH-10, height: 22))
-        familyCareCallType.text = appName
-        familyCareCallType.textColor = UIColor.white
-        familyCareCallType.textAlignment = .left
-        familyCareCallType.font = UIFont.systemFont(ofSize: 13)
-        doctorLabel = UILabel.init(frame: CGRect.init(x: 10, y: 52, width: SCREEN_WIDTH-10, height: 30))
+        upperNavView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: SCREEN_WIDTH, height: 110))
+        upperNavView.alpha = 1.0
+        upperNavView.backgroundColor = #colorLiteral(red: 0.1792264283, green: 0.1641918719, blue: 0.2932648063, alpha: 1)
+        doctorLabel = UILabel.init(frame: CGRect.init(x: 10, y: 25, width: SCREEN_WIDTH-10, height: 30))
         doctorLabel.text = doctorName
         doctorLabel.textColor = UIColor.white
-        doctorLabel.textAlignment = .left
-        doctorLabel.font = UIFont.systemFont(ofSize: 16)
-        currentStatusLabel = UILabel.init(frame: CGRect.init(x: 10, y: 87, width: SCREEN_WIDTH-10, height: 22))
+        doctorLabel.textAlignment = .center
+        doctorLabel.font = UIFont.systemFont(ofSize: 18)
+        lineView = UIImageView.init(frame: CGRect.init(x: SCREEN_WIDTH/2-60, y: 65, width: 120, height: 2))
+        lineView.backgroundColor = #colorLiteral(red: 0.8787034154, green: 0.3988325298, blue: 0.3853704333, alpha: 1)
+        currentStatusLabel = UILabel.init(frame: CGRect.init(x: 10, y: 72, width: SCREEN_WIDTH-10, height: 22))
         currentStatusLabel.text = status.capitalized
         currentStatusLabel.textColor = UIColor.white
-        currentStatusLabel.textAlignment = .left
+        currentStatusLabel.textAlignment = .center
         currentStatusLabel.font = UIFont.systemFont(ofSize: 13)
-        upperNavView.addSubview(familyCareCallType)
         upperNavView.addSubview(doctorLabel)
+        upperNavView.addSubview(lineView)
         upperNavView.addSubview(currentStatusLabel)
         callRemoteView.addSubview(upperNavView)
         self.acceptBtn = UIImageView.init(frame: CGRect.init(x: SCREEN_WIDTH/2-60, y: SCREEN_HEIGHT-100, width: 60, height: 60))
         self.speakerBtn = UIImageView.init(frame: CGRect.init(x: SCREEN_WIDTH/2-60, y: SCREEN_HEIGHT-100, width: 60, height: 60))
+        self.speakerBtn.backgroundColor = #colorLiteral(red: 0.9377772212, green: 0.4243853092, blue: 0.3900203705, alpha: 1)
         self.speakerBtn.isHidden = true
         if isCallComing == true{
             rejectBtn = UIImageView.init(frame: CGRect.init(x: SCREEN_WIDTH/2+20, y: SCREEN_HEIGHT-100, width: 60, height: 60))
@@ -282,7 +296,7 @@ extension CommunityWebRtc{
         self.speakerBtn.contentMode = .center
         acceptBtn.layer.cornerRadius = 30
         acceptBtn.isUserInteractionEnabled = true
-        rejectBtn.backgroundColor = UIColor.red
+        rejectBtn.backgroundColor = #colorLiteral(red: 0.9377772212, green: 0.4243853092, blue: 0.3900203705, alpha: 1)
         rejectBtn.layer.cornerRadius = 30
         rejectBtn.clipsToBounds = true
         callRemoteView.addSubview(speakerBtn)
@@ -300,13 +314,19 @@ extension CommunityWebRtc{
         if let url = URL.init(string: self.isSpeakerOffUrl){
             self.downloadImage(url: url, value: "speaker1")
         }
-        
+        if self.isVideoCall{
+           self.setProximitySensorEnabled(false)
+        }else{
+             self.setProximitySensorEnabled(true)
+        }
         if let appl = UIApplication.shared.delegate as? CDVAppDelegate{
             self.callRemoteView.backgroundColor = UIColor.white
             appl.window.addSubview(callRemoteView)
             appl.window.bringSubview(toFront: callRemoteView)
         }
     }
+    
+    
     @objc internal func acceptCall(gestureRecognizer: UITapGestureRecognizer) {
         print("acceptCall")
         self.rejectBtn.frame = CGRect.init(x: SCREEN_WIDTH/2+20, y: SCREEN_HEIGHT-100, width: 60, height: 60)
@@ -581,7 +601,7 @@ extension CommunityWebRtc{
                     self.acceptBtn.image = resizeImage(image: UIImage.init(data: data)!, targetSize: CGSize(width: 23, height: 23))
                 }
                 else if value == "reject"{
-                    self.rejectBtn.image = resizeImage(image: UIImage.init(data: data)!, targetSize: CGSize(width: 13, height: 13))
+                    self.rejectBtn.image = resizeImage(image: UIImage.init(data: data)!, targetSize: CGSize(width: 35, height: 35))
                 }
                 else if value == "speaker1"{
                     self.isSpeakerOffImage = resizeImage(image: UIImage.init(data: data)!, targetSize: CGSize(width: 20, height: 20))
