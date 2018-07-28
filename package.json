@@ -1,7 +1,7 @@
 {
   "name": "cordova-plugin-webrtc-community",
   "email": "kumaraman7056@gmail.com",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Web-Rtc plugin for community app.",
   "repository": {
     "type": "git",

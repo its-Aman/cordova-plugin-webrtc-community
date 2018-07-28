@@ -155,6 +155,11 @@ let SCREEN_HEIGHT = UIScreen.main.bounds.height
                     self.isSpeakerOff = true
                     self.SetSpeakerOn()
                 }
+            }else{
+                if !self.isVideoCall{
+                    self.isSpeakerOff = true
+                    self.SetSpeakerOn()
+                }
             }
             self.perform(#selector(self.calling), with: nil, afterDelay: 1.0)
         }
@@ -208,7 +213,7 @@ let SCREEN_HEIGHT = UIScreen.main.bounds.height
         self.currentStatusLabel.text = "\(hrStr) : \(minStr) : \(secStr) "
     }
     func setAudioOutputSpeaker(){
-        // try? AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
+       // try? AVAudioSession.sharedInstance().overrideOutputAudioPort(.none)
     }
     func setViewOfVideo(){
         self.callLocalView = RTCEAGLVideoView.init(frame: CGRect(x: SCREEN_WIDTH-130, y: SCREEN_HEIGHT-280, width: 120, height: 150))
@@ -566,6 +571,7 @@ extension CommunityWebRtc  {
     }
     func createAnswerForOfferReceived(sdpAns : String) -> Void {
         self.videoClient?.createAnswerForOfferReceived(withRemoteSDP: sdpAns)
+
     }
 }
 extension CommunityWebRtc{
@@ -598,7 +604,7 @@ extension CommunityWebRtc{
                 if value == "user"{
                     self.callImageView.image = UIImage.init(data: data)
                 }else if value == "accept"{
-                    self.acceptBtn.image = resizeImage(image: UIImage.init(data: data)!, targetSize: CGSize(width: 23, height: 23))
+                    self.acceptBtn.image = resizeImage(image: UIImage.init(data: data)!, targetSize: CGSize(width: 35, height: 35))
                 }
                 else if value == "reject"{
                     self.rejectBtn.image = resizeImage(image: UIImage.init(data: data)!, targetSize: CGSize(width: 35, height: 35))
